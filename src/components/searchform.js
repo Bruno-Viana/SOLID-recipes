@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, TextInput, View, TouchableHighlight, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
-import { requestData } from './utils/requestdata';
+import { requestData } from '../utils/requestdata';
 import FoundRecipes from './foundrecipes';
 
 const SearchForm = () => {
