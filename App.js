@@ -7,7 +7,6 @@ export default function App() {
   return (
       <SafeAreaView style={styles.container}>
         <View>
-          <Text>Open up App.js to start wosrking on your app!</Text>
           <MyStatusBar/> 
           <SearchForm/>
         </View>

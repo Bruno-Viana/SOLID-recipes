@@ -15,7 +15,7 @@ export class MyStatusBar extends Component {
 const bar = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff', // Set your desired background color for the entire screen
+    backgroundColor: '#fff',
   },
 });
 
