@@ -1,7 +1,7 @@
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
-import MyStatusBar from './src/components/statusabar';
-import SearchForm from './src/components/searchform';
+import MyStatusBar from './src/components/statusBar';
+import SearchForm from './src/components/searchForm';
 
 export default function App() {
   return (
