@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Text, TextInput, View, TouchableHighlight, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { handleSearch } from '../utils/dataToObject';
 import FoundRecipes from './foundRecipes';
+import LottieView from 'lottie-react-native';
 
 const SearchForm = () => {
   const [textInput, setTextInput] = useState('');
@@ -12,9 +13,24 @@ const SearchForm = () => {
     setShowFoundRecipesLocal(value);
   };
 
+  const memoizedLottieView = useMemo(
+    () => (
+      <LottieView
+        style={{ width: 300, height: 300 }}
+        source={require('../../assets/cooking_animation.json')}
+        autoPlay={true}
+        onError={(error) => console.log('Lottie Error:', error)}
+      />
+    ),
+    [] //keep it empty to keep one instance
+  );
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>SOLID Recipes</Text>
+      {!showFoundRecipesLocal && memoizedLottieView}
+      <Text onPress={() => setShowFoundRecipesLocal(false)} style={styles.title}>
+        SOLID Recipes
+      </Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.textInput}
@@ -24,12 +40,16 @@ const SearchForm = () => {
           onSubmitEditing={() => handleSearch(textInput, handleShowFoundRecipes)}
         />
       </View>
-      <TouchableHighlight onPress={() => handleSearch(textInput, handleShowFoundRecipes)} style={styles.buttonArea}>
+      <TouchableHighlight
+        onPress={() => handleSearch(textInput, handleShowFoundRecipes)}
+        style={styles.buttonArea}>
         <View>
           <FontAwesomeIcon icon={faSearch} color="#fff" size={25} />
         </View>
       </TouchableHighlight>
       {showFoundRecipesLocal && <FoundRecipes />}
+      {!showFoundRecipesLocal && <View style={{ flex: 1 }}></View>}
+      <Text style={styles.bottomText}>@ Q4 / 2023</Text>
     </View>
   );
 };
@@ -47,8 +67,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputContainer: {
-    width: '80%',
+    width: '100%',
     marginBottom: 20,
+    paddingHorizontal: 20,
   },
   textInput: {
     height: 40,
@@ -56,14 +77,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingLeft: 10,
+    width: '100%',
   },
   buttonArea: {
     borderRadius: 10,
-    backgroundColor: '#008ad6',
-    width: '80%',
+    backgroundColor: '#e5934f',
+    width: '90%',
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 5,
+  },
+  bottomText: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: 'gray',
+    marginBottom: 5,
   },
 });
 

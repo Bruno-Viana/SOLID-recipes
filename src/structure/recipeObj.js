@@ -15,7 +15,7 @@ export function getObjList(){
 }
 
 export function handleDataToObj(dataReceived) {
-  if (dataReceived["hits"][0] == undefined && dataReceived["_links"] == undefined) {
+  if (dataReceived["hits"][0] == undefined && dataReceived["_links"][0] == undefined) {
     clearObjList();
     console.log("Vai limpar a lista");
     return getObjList();
@@ -23,21 +23,30 @@ export function handleDataToObj(dataReceived) {
     if (dataReceived["_links"] && dataReceived["_links"]["next"] && dataReceived["_links"]["next"]["href"] != undefined) {
       setNextPage(dataReceived["_links"]["next"]["href"]);
     }
-    //Parse Json to Obj
-    const newRecipes = dataReceived["hits"].map(recipe => ({
-      label: recipe["recipe"]["label"],
-      image: recipe["recipe"]["image"],
-      thumbnailUrl: recipe["recipe"]["images"]["THUMBNAIL"]["url"],
-      ingredientLines: recipe["recipe"]["ingredientLines"],
-      calories: recipe["recipe"]["calories"],
-      cuisineType: recipe["recipe"]["cuisineType"],
-      instructionsUrl: recipe["recipe"]["url"],
-      source: recipe["recipe"]["source"]
-
-    }));
-
-    recipeObjList.push(...newRecipes);
+    // Parse Json to Obj
+    const newRecipes = dataReceived["hits"].map(recipe => {
+      const totalTime = recipe["recipe"]["totalTime"];
+      if (totalTime > 0) {
+        return {
+          label: recipe["recipe"]["label"],
+          image: recipe["recipe"]["image"],
+          thumbnailUrl: recipe["recipe"]["images"]["REGULAR"]["url"],
+          ingredientLines: recipe["recipe"]["ingredientLines"],
+          calories: recipe["recipe"]["calories"],
+          cuisineType: recipe["recipe"]["cuisineType"],
+          instructionsUrl: recipe["recipe"]["url"],
+          source: recipe["recipe"]["source"],
+          totalTime: totalTime,
+          proteins: recipe["recipe"]["totalNutrients"]["PROCNT"]["quantity"],
+          carbs: recipe["recipe"]["totalNutrients"]["CHOCDF"]["quantity"],
+          fats: recipe["recipe"]["totalNutrients"]["FAT"]["quantity"],
+        };
+      }
+      return null;
+    });
+    recipeObjList.push(...newRecipes.filter(recipe => recipe !== null));
   }
   return getObjList();
 }
+
 

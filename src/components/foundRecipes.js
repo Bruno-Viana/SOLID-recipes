@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { handleDataToObj, nextPage, recipeObjList } from '../structure/recipeObj';
-import { detectScrollCloseToBottom } from '../utils/scrollEventHandler';
 import { requestData } from '../utils/requestData';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons/faArrowLeft';
+import { faArrowLeft, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 
 const FoundRecipes = () => {
   const [loading, setLoading] = useState(true);
@@ -18,7 +17,7 @@ const FoundRecipes = () => {
   }, []);
 
   const handleObservableRecipes = (value) => {
-    setObservableRecipes(prevState => [...prevState, ...value]);
+    setObservableRecipes((prevState) => [...prevState, ...value]);
   };
 
   const fetchDataAndHandleObservable = async () => {
@@ -63,21 +62,37 @@ const FoundRecipes = () => {
             />
             <Text style={styles.recipeLabel}>{item.label}</Text>
             <Text style={styles.source}>Source: {item.source}</Text>
+
+            <View style={styles.tagContainer}>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>Cooking time: {item.totalTime} minutes</Text>
+              </View>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>Calories: {item.calories.toFixed(0)}kcal</Text>
+              </View>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>Proteins: {item.proteins.toFixed(0)}g</Text>
+              </View>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>Carbs: {item.carbs.toFixed(0)}g</Text>
+              </View>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>Fats: {item.fats.toFixed(0)}g</Text>
+              </View>
+            </View>
+
             {loading && <ActivityIndicator size="small" color="#008ad6" />}
           </TouchableOpacity>
         )}
         onEndReached={async () => {
+          setShowScrollToTop(true);
           await fetchDataAndHandleObservable();
-          setShowScrollToTop(true)
         }}
       />
 
       {selectedRecipe && (
         <View style={styles.webViewContainer}>
-          <WebView
-            source={{ uri: selectedRecipe }}
-            style={styles.webView}
-          />
+          <WebView source={{ uri: selectedRecipe }} style={styles.webView} />
           <TouchableOpacity onPress={closeWebView} style={styles.closeButton}>
             <FontAwesomeIcon icon={faArrowLeft} color="#fff" size={15} style={styles.icon} />
             <Text style={styles.closeButtonText}>Close WebView</Text>
@@ -90,11 +105,11 @@ const FoundRecipes = () => {
           onPress={() => {
             if (flatListRef.current) {
               flatListRef.current.scrollToOffset({ offset: 0, animated: true });
-              setShowScrollToTop(false)
+              setShowScrollToTop(false);
             }
           }}
           style={styles.scrollButton}>
-          <Text style={styles.scrollButtonText}>Scroll to Top</Text>
+          <FontAwesomeIcon icon={faArrowUp} color="#fff" size={20} style={styles.scrollButtonText} />
         </TouchableOpacity>
       )}
     </>
@@ -142,7 +157,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 5,
     top: 5,
-    backgroundColor: 'red',
+    backgroundColor: '#E97451',
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -166,8 +181,8 @@ const styles = StyleSheet.create({
   scrollButton: {
     position: 'absolute',
     bottom: 20,
-    right: 20,
-    backgroundColor: '#008ad6',
+    right: 5,
+    backgroundColor: '#E97451',
     padding: 10,
     borderRadius: 8,
     shadowColor: '#000',
@@ -181,6 +196,24 @@ const styles = StyleSheet.create({
   },
   scrollButtonText: {
     color: '#fff',
+    fontWeight: 'bold',
+  },
+  tagContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 5,
+  },
+  tag: {
+    backgroundColor: '#ff8e3a',
+    padding: 5,
+    margin: 2,
+    borderRadius: 8,
+  },
+  tagText: {
+    color: '#fff',
+    fontSize: 12,
     fontWeight: 'bold',
   },
 });

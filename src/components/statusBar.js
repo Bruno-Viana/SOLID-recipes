@@ -18,7 +18,7 @@ export class MyStatusBar extends Component {
 const styles = StyleSheet.create({
   container: {
     height: StatusBar.currentHeight,
-    backgroundColor: '#2c3e50', // Set your desired background color
+    backgroundColor: '#e5934f',
   },
 });
 
