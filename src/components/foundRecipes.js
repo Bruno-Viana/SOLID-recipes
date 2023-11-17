@@ -35,9 +35,7 @@ const FoundRecipes = () => {
         if (detectScrollCloseToBottom(nativeEvent) && nextPage !== "") {
           await fetchDataAndHandleObservable();
         }
-      }}
-    >
-      <Text style={styles.title}>Termionu fetch com sucesso</Text>
+      }}>
       {observableRecipes.map((recipe, index) => (
         <View key={index} style={styles.recipeContainer}>
           <Text style={styles.recipeLabel}>{recipe.label}</Text>

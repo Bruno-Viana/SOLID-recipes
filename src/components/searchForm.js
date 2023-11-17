@@ -16,7 +16,9 @@ const SearchForm = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Text>SearchForm</Text>      
+        <Text 
+          style={styles.textinput}
+          >SearchForm</Text>      
         <TextInput 
           style={styles.textinput}
           placeholder="Search for recipes ex: Caesar Salad"

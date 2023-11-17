@@ -30,7 +30,9 @@ export function handleDataToObj(dataReceived) {
       thumbnailUrl: recipe["recipe"]["images"]["THUMBNAIL"]["url"],
       ingredientLines: recipe["recipe"]["ingredientLines"],
       calories: recipe["recipe"]["calories"],
-      cuisineType: recipe["recipe"]["cuisineType"]
+      cuisineType: recipe["recipe"]["cuisineType"],
+      instructionsUrl: recipe["recipe"]["url"],
+      source: recipe["recipe"]["source"]
     }));
 
     recipeObjList.push(...newRecipes);
