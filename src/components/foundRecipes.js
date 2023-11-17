@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { handleDataToObj, nextPage, recipeObjList } from '../structure/recipeObj';
 import { detectScrollCloseToBottom } from '../utils/scrollEventHandler';
@@ -12,14 +12,13 @@ const FoundRecipes = () => {
   const [observableRecipes, setObservableRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-  const [scrolledItems, setScrolledItems] = useState(0);
 
   useEffect(() => {
     handleObservableRecipes(recipeObjList);
   }, []);
 
   const handleObservableRecipes = (value) => {
-    setObservableRecipes(value);
+    setObservableRecipes(prevState => [...prevState, ...value]);
   };
 
   const fetchDataAndHandleObservable = async () => {
@@ -44,41 +43,34 @@ const FoundRecipes = () => {
     setLoading(false);
   };
 
-  const scrollViewRef = useRef(); //Scrolls to Y
+  const flatListRef = useRef();
 
   return (
     <>
-      <ScrollView
-        ref={scrollViewRef}
+      <FlatList
+        ref={flatListRef}
         contentContainerStyle={styles.scrollContainer}
-        onScroll={async ({ nativeEvent }) => {
-          if (detectScrollCloseToBottom(nativeEvent) && nextPage !== "") {
-            await fetchDataAndHandleObservable();
-          }
-          const itemHeight = 200;
-          const scrolledItemsCount = Math.floor(nativeEvent.contentOffset.y / itemHeight);
-
-          setScrolledItems(scrolledItemsCount);
-          setShowScrollToTop(scrolledItemsCount > 3);
-        }}>
-        {observableRecipes.map((recipe, index) => (
+        data={observableRecipes}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
           <TouchableOpacity
-            key={index}
             style={styles.recipeContainer}
-            onPress={() => openWebView(recipe.instructionsUrl)}>
+            onPress={() => openWebView(item.instructionsUrl)}>
             <Image
               onLoad={handleImageLoad}
               style={styles.recipeImage}
-              source={{
-                uri: recipe.thumbnailUrl,
-              }}
+              source={{ uri: item.thumbnailUrl }}
             />
-            <Text style={styles.recipeLabel}>{recipe.label}</Text>
-            <Text style={styles.source}>Source: {recipe.source}</Text>
+            <Text style={styles.recipeLabel}>{item.label}</Text>
+            <Text style={styles.source}>Source: {item.source}</Text>
             {loading && <ActivityIndicator size="small" color="#008ad6" />}
           </TouchableOpacity>
-        ))}
-      </ScrollView>
+        )}
+        onEndReached={async () => {
+          await fetchDataAndHandleObservable();
+          setShowScrollToTop(true)
+        }}
+      />
 
       {selectedRecipe && (
         <View style={styles.webViewContainer}>
@@ -93,11 +85,12 @@ const FoundRecipes = () => {
         </View>
       )}
 
-      {showScrollToTop && (
+      {!selectedRecipe && showScrollToTop && (
         <TouchableOpacity
           onPress={() => {
-            if (scrollViewRef.current) {
-              scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true });
+            if (flatListRef.current) {
+              flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+              setShowScrollToTop(false)
             }
           }}
           style={styles.scrollButton}>
