@@ -1,23 +1,8 @@
-export let nextPage = ''
-
-export function setNextPage(url){
-    nextPage = url;
-}
-
-export let recipeObjList = []
-
-export function clearObjList(){
-    recipeObjList = [];
-}
-
-export function getObjList(){
-   return recipeObjList;
-}
+import {setNextPage, recipeObjList, getObjList, clearObjList} from '../api/constants';
 
 export function handleDataToObj(dataReceived) {
   if (dataReceived["hits"][0] == undefined && dataReceived["_links"][0] == undefined) {
     clearObjList();
-    console.log("Vai limpar a lista");
     return getObjList();
   } else if (dataReceived["hits"][0] !== undefined) {
     if (dataReceived["_links"] && dataReceived["_links"]["next"] && dataReceived["_links"]["next"]["href"] != undefined) {

@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { handleDataToObj, nextPage, recipeObjList } from '../structure/recipeObj';
-import { requestData } from '../utils/requestData';
+import { handleDataToObj} from '../structure/recipeObj';
+import { nextPage, recipeObjList} from '../api/constants';
+import { requestData } from '../api/axiosGet';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeft, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+import TagContainer from '../components/tagContainer';
+import CustomButton from '../components/customButton';
 
 const FoundRecipes = () => {
   const [loading, setLoading] = useState(true);
@@ -63,23 +66,15 @@ const FoundRecipes = () => {
             <Text style={styles.recipeLabel}>{item.label}</Text>
             <Text style={styles.source}>Source: {item.source}</Text>
 
-            <View style={styles.tagContainer}>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>Cooking time: {item.totalTime} minutes</Text>
-              </View>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>Calories: {item.calories.toFixed(0)}kcal</Text>
-              </View>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>Proteins: {item.proteins.toFixed(0)}g</Text>
-              </View>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>Carbs: {item.carbs.toFixed(0)}g</Text>
-              </View>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>Fats: {item.fats.toFixed(0)}g</Text>
-              </View>
-            </View>
+            <TagContainer
+              tags={[
+                `Cooking time: ${item.totalTime} minutes`,
+                `Calories: ${item.calories.toFixed(0)}kcal`,
+                `Proteins: ${item.proteins.toFixed(0)}g`,
+                `Carbs: ${item.carbs.toFixed(0)}g`,
+                `Fats: ${item.fats.toFixed(0)}g`,
+              ]}
+            />
 
             {loading && <ActivityIndicator size="small" color="#008ad6" />}
           </TouchableOpacity>
@@ -93,10 +88,7 @@ const FoundRecipes = () => {
       {selectedRecipe && (
         <View style={styles.webViewContainer}>
           <WebView source={{ uri: selectedRecipe }} style={styles.webView} />
-          <TouchableOpacity onPress={closeWebView} style={styles.closeButton}>
-            <FontAwesomeIcon icon={faArrowLeft} color="#fff" size={15} style={styles.icon} />
-            <Text style={styles.closeButtonText}>Close WebView</Text>
-          </TouchableOpacity>
+          <CustomButton onPress={closeWebView} text={'Close WebView'} iconFromFA={faArrowLeft} />
         </View>
       )}
 
@@ -196,24 +188,6 @@ const styles = StyleSheet.create({
   },
   scrollButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
-  },
-  tagContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 5,
-  },
-  tag: {
-    backgroundColor: '#ff8e3a',
-    padding: 5,
-    margin: 2,
-    borderRadius: 8,
-  },
-  tagText: {
-    color: '#fff',
-    fontSize: 12,
     fontWeight: 'bold',
   },
 });

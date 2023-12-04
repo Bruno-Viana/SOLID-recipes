@@ -22,7 +22,7 @@ const SearchForm = () => {
         onError={(error) => console.log('Lottie Error:', error)}
       />
     ),
-    [] //keep it empty to keep one instance
+    [] //Única instância, bug do metro, não ocorre com o compilado.
   );
 
   return (

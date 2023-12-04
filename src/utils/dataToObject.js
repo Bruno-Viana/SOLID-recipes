@@ -1,22 +1,12 @@
-import { requestData } from '../utils/requestData';
-import { handleDataToObj, clearObjList } from '../structure/recipeObj';
+import { requestData } from '../api/axiosGet';
+import { handleDataToObj } from '../structure/recipeObj';
 import { Keyboard } from 'react-native';
+import { url, updateUrl, setSearchText, clearObjList} from '../api/constants';
 
-export let searchText = ''
-
-export function setSearchText(text){
-    searchText = text;
-}
 
 export let showFoundRecipes = false;
-
 export let dataFromAPI = []
 
-export let url = "https://api.edamam.com/api/recipes/v2?type=public&q=" + searchText + "&app_id=6bd1601d&app_key=49f019b3f5b8128868dce0126a6e100b"
-
-export function updateUrl(text){
-  url = "https://api.edamam.com/api/recipes/v2?type=public&q=" + text + "&app_id=6bd1601d&app_key=49f019b3f5b8128868dce0126a6e100b";
-}
 
 export const handleSearch = async (textInput, handleShowFoundRecipes) => {
     Keyboard.dismiss()
