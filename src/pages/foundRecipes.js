@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { handleDataToObj} from '../structure/recipeObj';
-import { nextPage, recipeObjList} from '../api/constants';
+import { handleDataToObj } from '../structure/recipeObj';
+import { nextPage, recipeObjList } from '../api/constants';
 import { requestData } from '../api/axiosGet';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { detectScrollCloseToBottom } from '../utils/scrollEventHandler';
 import { faArrowLeft, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import TagContainer from '../components/tagContainer';
 import CustomButton from '../components/customButton';
@@ -14,6 +14,8 @@ const FoundRecipes = () => {
   const [observableRecipes, setObservableRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [onEndReachedTriggered, setOnEndReachedTriggered] = useState(false);
+  const [onScrolledTop, setOnScrolledTop] = useState(false);
 
   useEffect(() => {
     handleObservableRecipes(recipeObjList);
@@ -41,11 +43,26 @@ const FoundRecipes = () => {
     setSelectedRecipe(null);
   };
 
+  const scrollToTop = useCallback(async () => {
+    setOnScrolledTop(true);
+    if (flatListRef.current) {
+      await flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+      setShowScrollToTop(false);
+    }
+    setOnScrolledTop(false);
+  }, []);
+
   const handleImageLoad = () => {
     setLoading(false);
   };
 
   const flatListRef = useRef();
+
+  useEffect(() => {
+    if (showScrollToTop && onScrolledTop) {
+      setShowScrollToTop(false);
+    }
+  }, [showScrollToTop, onScrolledTop]);
 
   return (
     <>
@@ -79,9 +96,18 @@ const FoundRecipes = () => {
             {loading && <ActivityIndicator size="small" color="#008ad6" />}
           </TouchableOpacity>
         )}
+        onScroll={(event) => {
+          if (detectScrollCloseToBottom(event.nativeEvent) && !onScrolledTop) {
+            setShowScrollToTop(true);
+            setOnEndReachedTriggered(false);
+          }
+        }}
         onEndReached={async () => {
-          setShowScrollToTop(true);
-          await fetchDataAndHandleObservable();
+          if (!onEndReachedTriggered) {
+            setShowScrollToTop(true);
+            setOnEndReachedTriggered(true);
+            await fetchDataAndHandleObservable();
+          }
         }}
       />
 
@@ -93,22 +119,29 @@ const FoundRecipes = () => {
       )}
 
       {!selectedRecipe && showScrollToTop && (
-        <TouchableOpacity
-          onPress={() => {
-            if (flatListRef.current) {
-              flatListRef.current.scrollToOffset({ offset: 0, animated: true });
-              setShowScrollToTop(false);
-            }
-          }}
-          style={styles.scrollButton}>
-          <FontAwesomeIcon icon={faArrowUp} color="#fff" size={20} style={styles.scrollButtonText} />
-        </TouchableOpacity>
+        <View style={styles.scrollButtonContainer}>
+          <CustomButton
+            onPress={scrollToTop}
+            text={''}
+            iconFromFA={faArrowUp}
+            additionalButtonStyle={styles.scrollButton}
+          />
+        </View>
       )}
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollButtonContainer: {
+    position: 'absolute',
+    bottom: 45,
+    right: 45,
+  },
+  scrollButton: {
+    width: 35,
+    height: 40,
+  },
   scrollContainer: {
     backgroundColor: '#fff',
   },
@@ -145,50 +178,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
   },
-  closeButton: {
-    position: 'absolute',
-    left: 5,
-    top: 5,
-    backgroundColor: '#E97451',
-    padding: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
   icon: {
     marginRight: 5,
-  },
-  scrollButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 5,
-    backgroundColor: '#E97451',
-    padding: 10,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  scrollButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
 });
 

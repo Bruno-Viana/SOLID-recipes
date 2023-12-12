@@ -2,9 +2,9 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
-const CustomButton = ({ onPress, text, iconFromFA}) => {
+const CustomButton = ({ onPress, text, iconFromFA, additionalButtonStyle = {}}) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.closeButton}>
+    <TouchableOpacity onPress={onPress} style={[styles.closeButton, additionalButtonStyle]}>
       <FontAwesomeIcon icon={iconFromFA} color="#fff" size={15} style={styles.icon} />
       <Text style={styles.closeButtonText}>{text}</Text>
     </TouchableOpacity>

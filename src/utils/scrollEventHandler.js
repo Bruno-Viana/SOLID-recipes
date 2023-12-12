@@ -1,4 +1,9 @@
 export function detectScrollCloseToBottom(nativeEvent){
-    return nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20;
+    offsetY = nativeEvent.contentOffset.y;
+    itemHeight = 150;
+    firstVisibleIndex = Math.floor(offsetY / itemHeight);
+    if(firstVisibleIndex>10) return true;
+    return false;
+
 };
  
