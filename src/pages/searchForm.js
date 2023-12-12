@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Text, TextInput, View, TouchableHighlight, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
-import { handleSearch } from '../utils/dataToObject';
+import { handleSearch } from '../utils/handleSearch';
 import FoundRecipes from './foundRecipes';
 import LottieView from 'lottie-react-native';
 
