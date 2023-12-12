@@ -114,7 +114,10 @@ const FoundRecipes = () => {
       {selectedRecipe && (
         <View style={styles.webViewContainer}>
           <WebView source={{ uri: selectedRecipe }} style={styles.webView} />
-          <CustomButton onPress={closeWebView} text={'Close WebView'} iconFromFA={faArrowLeft} />
+          <CustomButton 
+            onPress={closeWebView} 
+            text={'Close WebView'} 
+            iconFromFA={faArrowLeft} />
         </View>
       )}
 

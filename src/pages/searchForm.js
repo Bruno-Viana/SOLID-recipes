@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Text, TextInput, View, TouchableHighlight, StyleSheet } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
-import { handleSearch } from '../utils/handleSearch';
+import * as apiHandler from "../utils/handleSearch";
 import FoundRecipes from './foundRecipes';
 import LottieView from 'lottie-react-native';
 
@@ -37,11 +37,11 @@ const SearchForm = () => {
           placeholder="Search for recipes (e.g., Caesar Salad)"
           value={textInput}
           onChangeText={(text) => setTextInput(text)}
-          onSubmitEditing={() => handleSearch(textInput, handleShowFoundRecipes)}
+          onSubmitEditing={() => apiHandler.handleSearch(textInput, handleShowFoundRecipes)}
         />
       </View>
       <TouchableHighlight
-        onPress={() => handleSearch(textInput, handleShowFoundRecipes)}
+        onPress={() => apiHandler.handleSearch(textInput, handleShowFoundRecipes)}
         style={styles.buttonArea}>
         <View>
           <FontAwesomeIcon icon={faSearch} color="#fff" size={25} />

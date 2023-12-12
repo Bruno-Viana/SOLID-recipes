@@ -15,7 +15,6 @@ export const handleSearch = async (textInput, handleShowFoundRecipes) => {
     setSearchText(textInput)
     updateUrl(textInput)
 
-    try {
       dataFromAPI = await requestData(url);
       if(dataFromAPI["hits"][0] === undefined){
         return;
@@ -23,7 +22,4 @@ export const handleSearch = async (textInput, handleShowFoundRecipes) => {
         handleShowFoundRecipes(true)
         handleDataToObj(dataFromAPI)
       }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
   };
